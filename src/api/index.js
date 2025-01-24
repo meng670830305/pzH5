@@ -8,8 +8,20 @@ export default {
   index() {
     return request.get('/Index/index');
   },
-  //orderDetail
-  orderDetail() {
+  //Companion
+  Companion() {
     return request.get('/h5/companion');
+  },
+  //orderCreate
+  createOrder(data) {
+    return request.post('/createOrder', data);
+  },
+  //orderList
+  orderList(params) {
+    return request.get('/order/list', { params });
+  },
+  //orderDetail
+  orderDetail(params) {
+    return request.get('/order/detail', { params });
   },
 };

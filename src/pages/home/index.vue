@@ -66,7 +66,7 @@ const homeData = reactive({
 })
 onMounted(async () => {
   const { data } = await proxy.$api.index()
-  //属性合并
+  //   属性合并
   Object.assign(homeData, data.data)
   console.log(homeData)
 })

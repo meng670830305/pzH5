@@ -13,13 +13,13 @@
           <text class="od-jd-st-0">予約入力</text>
         </div>
         <div class="vp-flex_1">
-          <text class="od-jd-st-10">支払い</text>
+          <text class="od-jd-st-10">支払待</text>
         </div>
         <div class="vp-flex_1">
-          <text class="od-jd-st-20">サービス選択</text>
+          <text class="od-jd-st-20">来院待</text>
         </div>
         <div class="vp-flex_1">
-          <text class="od-jd-st-30">サービス完了</text>
+          <text class="od-jd-st-30">対応済</text>
         </div>
       </div>
     </div>

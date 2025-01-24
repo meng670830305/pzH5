@@ -103,12 +103,26 @@
                   @confirm="showComponionComfirm"
                   @cancel="showComponion=false" />
     </van-popup>
+
+    <!-- QRコードPOPUP -->
+    <van-dialog v-model:show="showCode"
+                :show-confirm-button="false">
+      <van-icon name="cross"
+                class="close"
+                @click="closeQrcode" />
+      <div>Line支払い</div>
+      <van-image :src="codeImage"
+                 width="150"
+                 height="150" />
+      <div>QRコードをスキャンしてください。</div>
+    </van-dialog>
   </div>
 </template>
 <script setup>
 import { ref, reactive, onMounted, getCurrentInstance, computed } from 'vue'
 import { useRouter } from 'vue-router';
 import statusBar from '../../components/statusBar.vue';
+import QRcode from 'qrCode';
 //获取当前vue实例
 const { proxy } = getCurrentInstance();
 const createInfo = reactive({
@@ -117,7 +131,7 @@ const createInfo = reactive({
   service: {},
 })
 onMounted(async () => {
-  const { data } = await proxy.$api.orderDetail()
+  const { data } = await proxy.$api.Companion()
   Object.assign(createInfo, data.data)
 })
 
@@ -127,6 +141,32 @@ const goBack = () => {
 }
 //from
 const form = reactive({})
+const submit = async () => {
+  const params = [
+    'hospital_id',
+    'hospital_name',
+    'demand',
+    'companion_id',
+    'receiveAddress',
+    'tel',
+    'starttime',
+  ]
+  for (const i of params) {
+    if (!form[i]) {
+      showNotify({ message: '入力内容を確認してください', type: 'danger' });
+      return
+    }
+  }
+  const { data: orderRes } = await proxy.$api.createOrder(form)
+
+  QRcode.toDataURL(orderRes.data.wx_code).then((url) => {
+    showCode.value = true
+    codeImage.value = url
+  })
+  //   if (orderRes.code == 200) {
+  //     router.push('/orderList')
+  //   }
+}
 //クリニック
 const showHospital = ref(false)
 const showHospColumns = computed(() => {
@@ -136,7 +176,6 @@ const showHospColumns = computed(() => {
 })
 //クリニック選択
 const showHospConfirm = (item) => {
-  console.log(item)
   form.hospital_id = item.selectedOptions[0].value
   form.hospital_name = item.selectedOptions[0].text
   showHospital.value = false
@@ -157,18 +196,22 @@ const showTimeConfirm = (item) => {
 //医師選択
 const showComponion = ref(false)
 const showComponionColumns = computed(() => {
-  console.log(createInfo)
-  console.log(createInfo.companion)
   return createInfo.companion.map(item => {
     return { text: item.name, value: item.id }
   })
 })
 //クリニック選択
 const showComponionComfirm = (item) => {
-  console.log(item)
   form.companion_id = item.selectedOptions[0].value
   form.companion_name = item.selectedOptions[0].text
-  showHospital.value = false
+  showComponion.value = false
+}
+//QRcode van-popup
+const showCode = ref(false)
+const codeImage = ref()
+const closeQrcode = () => {
+  showCode.value = false
+  router.push('/order')
 }
 
 </script>
